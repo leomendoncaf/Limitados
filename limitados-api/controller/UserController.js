@@ -10,7 +10,8 @@ class UserController {
         return {
           id: user._id,
           name: user.name,
-          email: user.email
+          email: user.email,
+          balance: user.balance,
         }
       })
       res.json(safeUsers);
@@ -59,6 +60,30 @@ class UserController {
       });
     } catch (err) {
       return res.status(500).json({ message: err.message });
+    }
+  }
+
+  async addBalance(req, res) {
+    const userId = req.userId;
+    const { value } = req.body;
+
+    try {
+      const currentUser = await User.findById(userId);
+      const updatedUser = await User
+        .findByIdAndUpdate(
+          userId,
+          { balance: currentUser.balance + Number.parseFloat(value) },
+          { new: true }
+        );
+
+      return res.status(200).json({
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        balance: updatedUser.balance,
+      });
+    } catch (error) {
+      return res.status(500).json({ error: 'Could not update balance.' });
     }
   }
 }

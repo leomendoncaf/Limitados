@@ -2,8 +2,7 @@
 import { useAppStore } from '@/store/app';
 import { reactive, ref } from 'vue';
 import { VAvatar } from 'vuetify/lib/components/index.mjs';
-import { loadUserData } from '@/core/user/user.profile'
-import { computed } from 'vue';
+import { addUserBalance, loadUserData } from '@/core/user/user.profile'
 const profilePlaceholder = 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg';
 
 const appStore = useAppStore()
@@ -22,16 +21,11 @@ let userProfile: UserProfile = reactive({
     balance: 0
 })
 
-const userBalance = computed(() => userProfile.balance.toLocaleString('pt-BR', {
+const userBalance = () => userProfile.balance.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
     minimumFractionDigits: 2
-}),)
-
-function checkStore() {
-
-    console.log(appStore.user)
-}
+});
 
 async function loadUserProfile() {
     loading.value = true
@@ -44,8 +38,21 @@ async function loadUserProfile() {
             balance: appStore.user.balance ?? 0,
         }
     }
-
     loading.value = false
+}
+
+async function addBalance() {
+    loading.value = true;
+    const result = await addUserBalance(10);
+
+    if (result.isOk()) {
+        userProfile = {
+            image: profilePlaceholder,
+            name: appStore.user.name,
+            balance: appStore.user.balance ?? 0,
+        }
+    }
+    loading.value = false;
 }
 
 loadUserProfile()
@@ -63,9 +70,9 @@ loadUserProfile()
                 <h2 class="mb-4">{{ userProfile.name }}</h2>
                 <div class="balance">
                     <v-icon icon="mdi-cash" color="success"></v-icon>
-                    <h3 class="currency">{{ userBalance }}
+                    <h3 class="currency">{{ userBalance() }}
                     </h3>
-                    <VBtn icon="mdi-plus" variant="tonal" @click="(_: any) => checkStore()" />
+                    <VBtn icon="mdi-plus" variant="tonal" @click="(_: any) => addBalance()" />
                 </div>
             </div>
         </div>

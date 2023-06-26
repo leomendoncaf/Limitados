@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const passport = require('passport');
@@ -13,7 +14,7 @@ const logger = require('./middlewares/logger')
 
 // Criando a instância do aplicativo
 const app = express();
-const port = 3030;
+const port = process.env.APP_PORT || 3030;
 
 // Configurando os middlewares
 app.use(cors());

@@ -34,4 +34,39 @@ async function _loadUserData(): Promise<Result<Unit, string>> {
   return new Err("Usuário não encontrado");
 }
 
+async function _addBalance(amount: number): Promise<Result<Unit, string>> {
+  const appConfig = useConfig();
+  const appStore = useAppStore();
+
+  const params: RequestInit = {
+    method: "POST",
+    body: JSON.stringify({
+      value: amount
+    }),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: appStore.user.token ?? "",
+    },
+  };
+
+  const result = await fetch(`${appConfig.apiBaseUrl}/user/balance`, params);
+
+  if (result.ok) {
+    const json = await result.json();
+    const user: User = {
+      id: json.id,
+      name: json.name,
+      email: json.email,
+      balance: json.balance,
+      token: appStore.user.token,
+    };
+    appStore.$state.user = user;
+    return new Ok(unit);
+  }
+
+  return new Err("Usuário não encontrado");
+}
+
 export const loadUserData = _loadUserData;
+export const addUserBalance = _addBalance;

@@ -24,7 +24,6 @@ export const useAppStore = defineStore("app", {
   },
 });
 
-useLocalStorage;
 
 export interface AppState {
   user: User;

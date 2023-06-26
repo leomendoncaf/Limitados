@@ -11,9 +11,9 @@ import { VBtn } from 'vuetify/lib/components/index.mjs';
     <VBtn @click="(_: any) => $router.push('/perfil')" prepend-icon="mdi-account" variant="outlined">
       Perfil
     </VBtn>
-    <VBtn @click="(_: any) => $router.push('/estatisticas')" prepend-icon="mdi-chart-line" variant="outlined">
+    <!-- <VBtn @click="(_: any) => $router.push('/estatisticas')" prepend-icon="mdi-chart-line" variant="outlined">
       Estatísticas
-    </VBtn>
+    </VBtn> -->
   </div>
 </template>
 

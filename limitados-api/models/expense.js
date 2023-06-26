@@ -13,6 +13,9 @@ const expenseSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  division: {
+    type: Object,
+  },
   grupo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Group',
@@ -26,6 +29,8 @@ const expenseSchema = new mongoose.Schema({
     }
   ]
 });
+
+expenseSchema.set('toJSON', { virtuals: true });
 
 const Expense = mongoose.model('Expense', expenseSchema);
 
