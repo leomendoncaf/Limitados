@@ -62,6 +62,7 @@ function toggleSelectedUser(user: User): void {
         selectedUsers.add(user);
     }
 }
+
 async function loadUsers() {
     isLoading.value = true;
 
@@ -72,9 +73,10 @@ async function loadUsers() {
         allUsers = result.value;
     }
 
-    const currentUser = allUsers.find((user) => user.id = appStore.user.id);
+    const currentUser = allUsers.find((user) => user.id === appStore.user.id);
     if (currentUser) {
         selectedUsers.add(currentUser);
+        allUsers = [... new Set([currentUser, ...allUsers])]
     }
 
     isLoading.value = false;

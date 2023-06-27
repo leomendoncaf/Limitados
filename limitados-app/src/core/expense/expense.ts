@@ -7,17 +7,19 @@ export class Expense{
     description: string;
     group: Group;
     members: Array<User>;
+    memberAmount: {[key: string]: number};
     date: Date;
     division: {[key: string]: {owes: number, owedBy: number}};
 
     constructor(
-        {id, value, description, group, members, date, division}:
+        {id, value, description, group, members, memberAmount, date, division}:
         {
             id: string;
             value: number;
             description: string;
             group: Group;
             members: Array<User>;
+            memberAmount: {[key: string]: number};
             date: Date;
     division: {[key: string]: {owes: number, owedBy: number}};
         }
@@ -27,6 +29,7 @@ export class Expense{
         this.description = description;
         this.group = group;
         this.members = members;
+        this.memberAmount = memberAmount;
         this.date  = date;
         this.division = division;
     }

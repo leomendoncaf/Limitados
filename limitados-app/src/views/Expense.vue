@@ -1,38 +1,30 @@
 <script setup lang="ts">
 import { Expense } from '@/core/expense/expense';
-import { fetchSingleExpense } from '@/core/expense/expense.service';
+import { UserBalance, calculateExpenses } from '@/core/expense/expense.calculator';
+import { fetchGroupExpenses } from '@/core/expense/expense.service';
+import { Group } from '@/core/group/group';
+import { fetchGroupById } from '@/core/group/group.service';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
-const expenseId = route.params.id as string;
+const groupId = route.params.id as string;
 
+const group = ref<Group>({
+    description: '',
+    id: '',
+    members: [],
+    name: ''
+});
 const isLoading = ref(false);
 
-const emptyExpense = new Expense({
-    id: '',
-    value: 0,
-    members: [],
-    description: '',
-    date: new Date(),
-    division: {},
-    group: {
-        id: '',
-        name: '',
-        members: [],
-        description: '',
-    }
-});
-let expense = ref<Expense>(emptyExpense);
+let expenses = ref<Expense[]>([]);
 
-const averageExpense = (): number => {
-    let participantsFactor = expense.value.members.length - 1;
-    if (participantsFactor === 0) {
-        participantsFactor = 1;
-    }
-
-    return expense.value.value / participantsFactor;
-};
+const allExpenses = ref<{
+    total: number,
+    average: number,
+    balances: { [key: string]: UserBalance }
+}>({ total: 0, average: 0, balances: {} });
 
 function formatCurrency(value: number): string {
     return value.toLocaleString('pt-BR', {
@@ -42,18 +34,32 @@ function formatCurrency(value: number): string {
     });
 }
 
+async function getGroup() {
+    const result = await fetchGroupById(groupId)
+    if (result.isOk()) {
+        group.value = result.value;
+    }
+}
+
 async function getExpense() {
     isLoading.value = true;
-    expense.value = emptyExpense;
-    const result = await fetchSingleExpense(expenseId);
+
+    const result = await fetchGroupExpenses(groupId);
     console.log(result);
     if (result.isOk()) {
-        expense.value = result.value;
+        expenses.value = result.value;
     }
 
     isLoading.value = false;
 }
-getExpense();
+
+async function initState() {
+    await getGroup();
+    await getExpense();
+    allExpenses.value = calculateExpenses(group.value, expenses.value);
+}
+
+initState()
 </script>
 
 <template>
@@ -65,17 +71,19 @@ getExpense();
             <thead>
                 <tr>
                     <th>Usuário</th>
+                    <th>Valor gasto</th>
                     <th>Despesa Média</th>
                     <th>Paga</th>
                     <th>Recebe</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="user in expense.members" :key="user.id">
+                <tr v-for="user in group.members" :key="user.id">
                     <td>{{ user.name }}</td>
-                    <td>{{ formatCurrency(averageExpense()) }}</td>
-                    <td>{{ formatCurrency(expense.division[user.id].owes) }}</td>
-                    <td>{{ formatCurrency(expense.division[user.id].owedBy) }}</td>
+                    <td>{{ formatCurrency(allExpenses.balances[user.id].original) }}</td>
+                    <td>{{ formatCurrency(allExpenses.average) }}</td>
+                    <td>{{ formatCurrency(allExpenses.balances[user.id].pay) }}</td>
+                    <td>{{ formatCurrency(allExpenses.balances[user.id].receive) }}</td>
                 </tr>
             </tbody>
         </VTable>

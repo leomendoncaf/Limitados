@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
 import { reactive, ref } from 'vue';
-import { fetchGroupExpenses } from '@/core/expense/expense.service';
+import { deleteGroupExpense, fetchGroupExpenses } from '@/core/expense/expense.service';
 import { Expense } from '@/core/expense/expense';
 import CreateExpenseDialog from '@/components/CreateExpenseDialog.vue';
 
@@ -27,6 +27,13 @@ async function getGroupExpenses() {
     }
 }
 
+async function deleteExpense(expenseId: string) {
+    const result = await deleteGroupExpense(expenseId);
+    if (result.isOk()) {
+        await getGroupExpenses();
+    }
+}
+
 getGroupExpenses();
 </script>
 
@@ -35,13 +42,24 @@ getGroupExpenses();
         <div class="h-screen w-100 d-flex align-center justify-center" id="loading-overlay" v-if="isLoading">
             <VProgressCircular indeterminate></VProgressCircular>
         </div>
-        <div class="d-flex w-100 justify-space-between mt-4 mb-4">
+        <VAppBar color="background" height="96">
             <h2 class="text-h4 mx-4">Despesas do grupo</h2>
-            <VBtn @click="isCreateDialogOpen = true" class="mx-4" prepend-icon="mdi-plus" variant="tonal">
-                Criar despesa
-                <CreateExpenseDialog @success-expense-creation="getGroupExpenses()">
-                </CreateExpenseDialog>
-            </VBtn>
+            <template v-slot:append>
+                <div class="d-flex flex-wrap-reverse" style="gap: 0.5em;">
+                    <VBtn @click="isCreateDialogOpen = true" class="mx-4" prepend-icon="mdi-plus" variant="tonal">
+                        Criar despesa
+                        <CreateExpenseDialog @success-expense-creation="getGroupExpenses()">
+                        </CreateExpenseDialog>
+                    </VBtn>
+                    <VBtn @click="$router.push(`/despesas/${groupId}`)" class="mx-4"
+                        prepend-icon="mdi-calculator-variant-outline" variant="elevated">
+                        Calcular
+                    </VBtn>
+                </div>
+            </template>
+        </VAppBar>
+        <div class="d-flex w-100 justify-space-between mt-4 mb-4">
+
         </div>
         <div id="my-groups" class="d-flex align-center flex-column" v-if="expenses.length > 0">
             <div>
@@ -57,7 +75,7 @@ getGroupExpenses();
                             }) }}
                         </span>
                     </VCardTitle>
-                    <VContainer class="d-flex mb-2">
+                    <VContainer class="d-flex">
                         <div class="d-block" v-for="member in expense.members" :key="member.id">
                             <VAvatar color="surface-variant mx-2">
                                 {{ member.name.at(0) }}
@@ -68,15 +86,15 @@ getGroupExpenses();
                         </div>
                     </VContainer>
                     <VCardActions>
-                        <VBtn variant="elevated" @click="$router.push(`/despesas/${expense.id}`)">
-                            Ver detalhes
+                        <VBtn color="error" variant="plain" @click="deleteExpense(expense.id)">
+                            Remover
                         </VBtn>
                     </VCardActions>
                 </VCard>
             </div>
         </div>
-        <div v-else class="h-screen d-flex flex-column justify-center align-center">
-            <p>Você não participa de nenhum grupo no momento. Crie um grupo acima.</p>
+        <div v-else class="h-screen d-flex flex-column justify-center align-center mx-4">
+            <p>Nenhuma despesa criada ainda.</p>
         </div>
     </div>
 </template>

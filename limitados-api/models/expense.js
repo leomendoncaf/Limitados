@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 
 const expenseSchema = new mongoose.Schema({
-  valor: {
+  total: {
     type: Number,
-    required: true
   },
   descricao: {
     type: String,
@@ -12,9 +11,6 @@ const expenseSchema = new mongoose.Schema({
   data: {
     type: Date,
     default: Date.now
-  },
-  division: {
-    type: Object,
   },
   grupo: {
     type: mongoose.Schema.Types.ObjectId,
@@ -27,7 +23,10 @@ const expenseSchema = new mongoose.Schema({
       ref: 'User',
       required: true
     }
-  ]
+  ],
+  memberAmount: {
+    type: Object,
+  }
 });
 
 expenseSchema.set('toJSON', { virtuals: true });

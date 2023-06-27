@@ -24,11 +24,12 @@ async function _fetchExpenses(groupId:string): Promise<Result<Array<Expense>, st
     const expenses: Array<Expense> = Array.from(json).map((expense: any)=>{
       return new Expense({
         id: expense.id,
-        value: expense.valor,
+        value: expense.total||0,
         description: expense.descricao,
         division: expense.division,
         date: new Date(expense.data),
         members: Array.from(expense.participantes).map((user:any)=> User.fromObject(user)),
+        memberAmount:expense.memberAmount,
         group: {
           id:expense.grupo.id ,
           name: expense.grupo.name,
@@ -62,11 +63,12 @@ async function _fetchSingleExpense(expenseId:string): Promise<Result<Expense, st
     const json = await result.json();
     const expense: Expense = new Expense({
       id: json.id,
-      value: json.valor,
+      value: json.total||0,
       description: json.descricao,
       date: new Date(json.data),
       division: json.division,
       members: Array.from(json.participantes).map((user:any)=> User.fromObject(user)),
+      memberAmount: json.memberAmount,
       group: {
         id:json.grupo.id ,
         name: json.grupo.name,
@@ -78,6 +80,27 @@ async function _fetchSingleExpense(expenseId:string): Promise<Result<Expense, st
   }
 
   return new Err("Ocorreu algum erro ao buscar por despesa");
+}
+async function _deleteExpense(expenseId:string): Promise<Result<Unit, string>> {
+  const appConfig = useConfig();
+  const appStore = useAppStore();
+
+  const params: RequestInit = {
+    method: "DELETe",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: appStore.user.token ?? "",
+    },
+  };
+
+  const result = await fetch(`${appConfig.apiBaseUrl}/expenses/${expenseId}`, params);
+
+  if (result.ok) {
+    return new Ok(unit);
+  }
+
+  return new Err("Ocorreu um erro ao deletar despesa.");
 }
 
 async function _createExpense(expense: ExpenseCreationParams): Promise<Result<Unit, string>>{
@@ -101,12 +124,13 @@ async function _createExpense(expense: ExpenseCreationParams): Promise<Result<Un
 }
 
 export type ExpenseCreationParams = {
-  userId: string;
   groupId: string;
   description: string;
-  value: number;
+  members: Array<string>;
+  memberAmount: {[key: string]: number}
 };
 
 export const fetchGroupExpenses = _fetchExpenses;
 export const fetchSingleExpense = _fetchSingleExpense;
+export const deleteGroupExpense = _deleteExpense;
 export const createExpense = _createExpense;

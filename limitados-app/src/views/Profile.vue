@@ -2,7 +2,7 @@
 import { useAppStore } from '@/store/app';
 import { reactive, ref } from 'vue';
 import { VAvatar } from 'vuetify/lib/components/index.mjs';
-import { addUserBalance, loadUserData } from '@/core/user/user.profile'
+import { loadUserData } from '@/core/user/user.profile'
 const profilePlaceholder = 'https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg';
 
 const appStore = useAppStore()
@@ -13,19 +13,16 @@ interface UserProfile {
     image?: string;
     name: string;
     balance: number;
+    email: string;
 }
 
 let userProfile: UserProfile = reactive({
     image: profilePlaceholder,
     name: '',
-    balance: 0
+    balance: 0,
+    email: ''
 })
 
-const userBalance = () => userProfile.balance.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2
-});
 
 async function loadUserProfile() {
     loading.value = true
@@ -35,24 +32,11 @@ async function loadUserProfile() {
         userProfile = {
             image: profilePlaceholder,
             name: appStore.user.name,
+            email: appStore.user.email,
             balance: appStore.user.balance ?? 0,
         }
     }
     loading.value = false
-}
-
-async function addBalance() {
-    loading.value = true;
-    const result = await addUserBalance(10);
-
-    if (result.isOk()) {
-        userProfile = {
-            image: profilePlaceholder,
-            name: appStore.user.name,
-            balance: appStore.user.balance ?? 0,
-        }
-    }
-    loading.value = false;
 }
 
 loadUserProfile()
@@ -68,11 +52,9 @@ loadUserProfile()
             <div id="profile-page" v-if="!loading">
                 <VAvatar color="suface-variant" size="80" :image="userProfile.image" class="mt-10 mb-2" />
                 <h2 class="mb-4">{{ userProfile.name }}</h2>
-                <div class="balance">
-                    <v-icon icon="mdi-cash" color="success"></v-icon>
-                    <h3 class="currency">{{ userBalance() }}
-                    </h3>
-                    <VBtn icon="mdi-plus" variant="tonal" @click="(_: any) => addBalance()" />
+                <div class="d-inline-flex">
+                    <h3 class="text-subtitle-1 mr-2">{{ userProfile.email }}</h3>
+                    <v-icon icon="mdi-email" color="success"></v-icon>
                 </div>
             </div>
         </div>

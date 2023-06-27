@@ -35,6 +35,35 @@ async function _fetchGroups(): Promise<Result<Array<Group>, string>> {
   return new Err("Ocorreu algum erro ao buscar por grupos");
 }
 
+async function _fetchGroupById(groupId: string): Promise<Result<Group, string>> {
+  const appConfig = useConfig();
+  const appStore = useAppStore();
+
+  const params: RequestInit = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: appStore.user.token ?? "",
+    },
+  };
+
+  const result = await fetch(`${appConfig.apiBaseUrl}/group/${groupId}`, params);
+
+  if (result.ok) {
+    const json = await result.json();
+    const group: Group = {
+      id: json.id,
+      name: json.name,
+      description: json.description,
+      members: Array.from(json.members).map((user:any)=> User.fromObject(user))
+    };
+    return new Ok(group);
+  }
+
+  return new Err("Ocorreu algum erro ao buscar pelo grupo");
+}
+
 async function _deleteGroup(groupId: string): Promise<Result<Unit, string>>{
   const appConfig = useConfig();
   const appStore = useAppStore();
@@ -94,5 +123,6 @@ export type CreateGroupParams = {
 
 
 export const loadGroupsData = _fetchGroups;
+export const fetchGroupById = _fetchGroupById;
 export const deleteGroup = _deleteGroup;
 export const createGroup = _createGroup;
