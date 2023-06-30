@@ -1,63 +1,59 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
+   push:
+      branches:
+         - main
 
 jobs:
+   test:
+      runs-on: ubuntu-latest
 
-  test:
-    runs-on: ubuntu-latest
+      steps:
+         - name: Checkout repository
+           uses: actions/checkout@v2
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+         - name: Set up Node.js
+           uses: actions/setup-node@v2
+           with:
+              node-version: "18.16.0"
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.16.0'
+         - name: Install dependencies
+           run: cd limitados-api && npm install
 
-    - name: Install dependencies
-      run: cd limitados-api && npm install
+         - name: Run tests
+           run: cd limitados-api && npx jest
 
-    - name: Run tests
-      run: cd limitados-api && npx jest
-      
-  build:
-    runs-on: ubuntu-latest
-    needs: test
+   build:
+      runs-on: ubuntu-latest
+      needs: test
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      steps:
+         - name: Checkout code
+           uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18.16.0'
+         - name: Set up Node.js
+           uses: actions/setup-node@v2
+           with:
+              node-version: "18.16.0"
 
-      - name: Install dependencies
-        run: cd limitados-api && npm ci
-        
-      - name: Run tests
-        run: cd limitados-api && npx jest
+         - name: Install dependencies
+           run: cd limitados-api && npm ci
 
-      - name: Build package
-        run: cd limitados-api && npm run package
+         - name: Build package
+           run: cd limitados-api && npm run package
 
-      - name: Generate report
-        run: cd limitados-api && npm run report
+         - name: Generate report
+           run: cd limitados-api && npm run report
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Package
-          path: dist/bundle.js
+         - name: Upload artifacts
+           uses: actions/upload-artifact@v2
+           with:
+              name: Package
+              path: dist/bundle.js
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Report
-          path: report.txt
+         - name: Upload artifacts
+           uses: actions/upload-artifact@v2
+           with:
+              name: Report
+              path: report.txt
