@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path-browserify');
 
 module.exports = {
   mode: 'development', // Defina 'development' ou 'production' conforme necessário

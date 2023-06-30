@@ -1,5 +1,5 @@
 const fs = require('fs');
-const path = require('path');
+const path = require('path-browserify');
 const { runCLI } = require('jest');
 
 // Defina o caminho para o arquivo de relatório
