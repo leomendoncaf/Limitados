@@ -23,7 +23,7 @@ jobs:
       run: cd limitados-api && npm install
 
     - name: Run tests
-      run: npm test
+      run: cd limitados-api && npm jest
       
   build:
     runs-on: ubuntu-latest
