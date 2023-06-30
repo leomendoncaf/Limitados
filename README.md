@@ -76,7 +76,7 @@ yarn install
 
 ```sh
 cd limitados-api
-yarn dev
+JWT_SECRET=test yarn dev
 ```
 
 ### Compilando e executando o app em desenvolvimento
