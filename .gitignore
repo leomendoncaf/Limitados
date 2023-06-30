@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-/limitados-api/dist
 
 
 # local env files
