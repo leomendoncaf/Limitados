@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 
 describe('ExpenseService', () => {
 
-    // Teste 2: Verifica se a descrição do gasto é obrigatória
+    // Teste 2: Verificar se a descrição do gasto é obrigatória
     test('should require a description', async () => {
       const expenseData = {
         value: 10,
