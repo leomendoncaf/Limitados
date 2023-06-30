@@ -1,4 +1,4 @@
-# S204 (Limitados)
+# C214 (Limitados)
 
 ![Repo Size](https://img.shields.io/github/repo-size/S204-Inatel-2023-1/Limitados)
 ![Linguagens usadas](https://img.shields.io/github/languages/count/S204-Inatel-2023-1/Limitados)
@@ -54,9 +54,11 @@ O Limitados será desenvolvido com tecnologias modernas, como Vue.js, Node.js e 
 </table>
 
 # Iniciando o projeto
+
 Esse projeto usa o `yarn` como gerenciador de pacotes. Para instalá-lo
-- vá às releases do projeto no github: https://github.com/yarnpkg/yarn/releases/
-- baixe o instalador ou pacote para seu sistema opereacional. `.rpm` se for fedora, `.deb` se for debian ou ubuntu, `.msi` se for windows, se for macos instale com `brew install yarn`
+
+-  vá às releases do projeto no github: https://github.com/yarnpkg/yarn/releases/
+-  baixe o instalador ou pacote para seu sistema opereacional. `.rpm` se for fedora, `.deb` se for debian ou ubuntu, `.msi` se for windows, se for macos instale com `brew install yarn`
 
 ## Configurando o projeto
 
