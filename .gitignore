@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
-/dist
+/limitados-api/dist
 
 
 # local env files
@@ -113,7 +113,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+limitados-api/dist
 
 # Gatsby files
 .cache/
