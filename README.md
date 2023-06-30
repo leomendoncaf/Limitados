@@ -85,3 +85,17 @@ JWT_SECRET=test yarn dev
 cd limitados-app
 yarn dev
 ```
+
+## Como executar todos os testes
+
+O comando executará todos os nossos testes de unidades da API
+```sh
+cd limitados-api
+npx jest
+```
+
+O comando executará a ferramenta de testes Cypress
+```sh 
+cd limitados-app
+./node_modules/.bin/cypress open
+```
