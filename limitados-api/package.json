@@ -31,6 +31,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.22.5",
     "sequelize": "^6.32.1",
     "webpack": "^5.88.1",
     "webpack-cli": "^5.1.4"
