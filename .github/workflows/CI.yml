@@ -45,10 +45,10 @@ jobs:
         run: cd limitados-api && npx jest
 
       - name: Build package
-        run: npm run package
+        run: cd limitados-api && npm run package
 
       - name: Generate report
-        run: npm run report
+        run: cd limitados-api && npm run report
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
