@@ -43,4 +43,6 @@ class ExpenseService {
   }
 }
 
-module.exports = new ExpenseService();
+module.exports = {
+  ExpenseService
+};
